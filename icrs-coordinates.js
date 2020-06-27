@@ -55,7 +55,7 @@ var gui;
 var rasc, rdesc, xasc, xdesc, yasc, ydesc;
 
 const REF_PLANE_RADIUS = 1.0;
-const SCALE = 200;
+const SCALE = 300;
 const HELPSIZE = 600;
 
 var sketch = function(p) {
@@ -66,7 +66,7 @@ var sketch = function(p) {
 
     p.setup = function() {
         var canvas = p.createCanvas(900, 600, p.WEBGL);
-        p.perspective();
+        p.ortho();
         canvas.position(0,0);
         gui = p.createGui(this, 'ICRS Coordinates');
         gui.addGlobals('showHelp', 'camRotY', 'camRotZ', 'alpha', 'delta');
@@ -108,22 +108,22 @@ var sketch = function(p) {
         // XYZ axes of the ICRS
         p.strokeWeight(1);
         p.stroke(0);
-        p.line(0,0,0,refPlaneRadius*SCALE*1.05,0,0);
+        p.line(0,0,0,REF_PLANE_RADIUS*SCALE*1.05,0,0);
         p.push()
-        p.translate(refPlaneRadius*SCALE*1.05,0,0);
+        p.translate(REF_PLANE_RADIUS*SCALE*1.05,0,0);
         p.rotateZ(-90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(SCALE*0.02, SCALE*0.04);
         p.pop();
-        p.line(0,0,0,0,refPlaneRadius*SCALE*1.05,0);
+        p.line(0,0,0,0,REF_PLANE_RADIUS*SCALE*1.05,0);
         p.push()
-        p.translate(0,refPlaneRadius*SCALE*1.05,0);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.translate(0,REF_PLANE_RADIUS*SCALE*1.05,0);
+        p.cone(SCALE*0.02, SCALE*0.04);
         p.pop();
-        p.line(0,0,0,0,0,refPlaneRadius*SCALE*0.7);
+        p.line(0,0,0,0,0,REF_PLANE_RADIUS*SCALE*0.7);
         p.push()
-        p.translate(0,0,refPlaneRadius*SCALE*0.7);
+        p.translate(0,0,REF_PLANE_RADIUS*SCALE*0.7);
         p.rotateX(90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(SCALE*0.02, SCALE*0.04);
         p.pop();
 
         p.pop();

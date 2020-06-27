@@ -43,6 +43,8 @@ var deltaMin = -90;
 var deltaMax = 90;
 var deltaStep = 1;
 
+var p, q, r;
+
 var explanationText;
 var explain;
 var showHelp = true;
@@ -54,8 +56,8 @@ var gui;
 
 var rasc, rdesc, xasc, xdesc, yasc, ydesc;
 
-const REF_PLANE_RADIUS = 1.0;
-const SCALE = 300;
+const REF_PLANE_RADIUS = 3.0;
+const SCALE = 100;
 const HELPSIZE = 600;
 
 var sketch = function(p) {
@@ -112,20 +114,65 @@ var sketch = function(p) {
         p.push()
         p.translate(REF_PLANE_RADIUS*SCALE*1.05,0,0);
         p.rotateZ(-90);
-        p.cone(SCALE*0.02, SCALE*0.04);
+        p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.line(0,0,0,0,REF_PLANE_RADIUS*SCALE*1.05,0);
         p.push()
         p.translate(0,REF_PLANE_RADIUS*SCALE*1.05,0);
-        p.cone(SCALE*0.02, SCALE*0.04);
+        p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
-        p.line(0,0,0,0,0,REF_PLANE_RADIUS*SCALE*0.7);
+        p.line(0,0,0,0,0,REF_PLANE_RADIUS*SCALE*1.05);
         p.push()
-        p.translate(0,0,REF_PLANE_RADIUS*SCALE*0.7);
+        p.translate(0,0,REF_PLANE_RADIUS*SCALE*1.05);
         p.rotateX(90);
-        p.cone(SCALE*0.02, SCALE*0.04);
+        p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
 
+        p.pop();
+
+        r = p.createVector(p.cos(alpha)*p.cos(delta), p.sin(alpha)*p.cos(delta), p.sin(delta));
+        r.mult(SCALE);
+
+        p.push();
+        p.strokeWeight(3);
+        p.stroke(0);
+        p.rotateZ(alpha);
+        p.rotateY(-delta);
+        p.line(0, 0, 0, r.mag(), 0, 0);
+        p.push()
+        p.translate(r.mag(), 0, 0);
+        p.rotateZ(-90);
+        p.cone(SCALE*0.05, SCALE*0.1);
+        p.pop();
+        p.pop();
+
+        p.push();
+        p.translate(r.x*REF_PLANE_RADIUS, r.y*REF_PLANE_RADIUS, r.z*REF_PLANE_RADIUS);
+        p.rotateZ(alpha);
+        p.rotateY(-delta);
+        p.strokeWeight(3);
+        p.stroke(mptab10.get('blue'))
+        p.line(0, 0, 0, SCALE, 0, 0);
+        p.push()
+        p.translate(r.mag(), 0, 0);
+        p.rotateZ(-90);
+        p.cone(SCALE*0.05, SCALE*0.1);
+        p.pop();
+        p.stroke(mptab10.get('orange'));
+        p.line(0, 0, 0, 0, SCALE, 0);
+        p.push()
+        p.translate(0, SCALE, 0);
+        p.cone(SCALE*0.05, SCALE*0.1);
+        p.pop();
+        p.stroke(mptab10.get('green'));
+        p.line(0, 0, 0, 0, 0, SCALE);
+        p.push()
+        p.translate(0, 0, SCALE);
+        p.rotateX(90);
+        p.cone(SCALE*0.05, SCALE*0.1);
+        p.pop();
+        p.stroke(0);
+        p.sphere(SCALE*0.05);
         p.pop();
 
         // Reference plane (XY plane of BCRS, loosely speaking the Ecliptic plane)

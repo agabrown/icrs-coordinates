@@ -146,7 +146,7 @@ var sketch = function(p) {
         p.stroke(0);
         p.rotateZ(alpha);
         p.rotateY(-delta);
-        drawLine(p, origin, rvec);
+        vectorizedLine(p, origin, rvec);
         p.push()
         p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
@@ -160,20 +160,20 @@ var sketch = function(p) {
         p.rotateY(-delta);
         p.strokeWeight(3);
         p.stroke(mptab10.get('blue'))
-        drawLine(p, origin, rvec);
+        vectorizedLine(p, origin, rvec);
         p.push()
         p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.stroke(mptab10.get('orange'));
-        drawLine(p, origin, pvec);
+        vectorizedLine(p, origin, pvec);
         p.push()
         p.translate(0, pvec.mag(), 0);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.stroke(mptab10.get('green'));
-        drawLine(p, origin, qvec);
+        vectorizedLine(p, origin, qvec);
         p.push()
         p.translate(0, 0, qvec.mag());
         p.rotateX(90);
@@ -233,6 +233,6 @@ function rightHanded3DtoWEBGL(p, rotY, rotZ) {
  * a - first point
  * b - second point
  */
-function drawLine(p, a, b) {
+function vectorizedLine(p, a, b) {
     p.line(a.x, a.y, a.z, b.x, b.y, b.z);
 }

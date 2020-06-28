@@ -43,7 +43,7 @@ var deltaMin = -90;
 var deltaMax = 90;
 var deltaStep = 1;
 
-var p, q, r;
+var pvec, qvec, rvec, origin, sourcvec;
 
 var explanationText;
 var explain;
@@ -80,6 +80,8 @@ var sketch = function(p) {
 
         p.ellipseMode(p.RADIUS);
         p.angleMode(p.DEGREES);
+
+        origin = p.createVector(0,0,0);
 
         p.noLoop();
         p.noFill();
@@ -130,44 +132,50 @@ var sketch = function(p) {
 
         p.pop();
 
-        r = p.createVector(p.cos(alpha)*p.cos(delta), p.sin(alpha)*p.cos(delta), p.sin(delta));
-        r.mult(SCALE);
+        pvec = p.createVector(0,1,0)
+        qvec = p.createVector(0,0,1);
+        rvec = p.createVector(1,0,0);
+        pvec.mult(SCALE);
+        qvec.mult(SCALE);
+        rvec.mult(SCALE);
+        sourcevec = p.createVector(p.cos(alpha)*p.cos(delta), p.sin(alpha)*p.cos(delta), p.sin(delta));
+        sourcevec.mult(REF_PLANE_RADIUS*SCALE);
 
         p.push();
         p.strokeWeight(3);
         p.stroke(0);
         p.rotateZ(alpha);
         p.rotateY(-delta);
-        p.line(0, 0, 0, r.mag(), 0, 0);
+        drawLine(p, origin, rvec);
         p.push()
-        p.translate(r.mag(), 0, 0);
+        p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.pop();
 
         p.push();
-        p.translate(r.x*REF_PLANE_RADIUS, r.y*REF_PLANE_RADIUS, r.z*REF_PLANE_RADIUS);
+        p.translate(sourcevec.x, sourcevec.y, sourcevec.z);
         p.rotateZ(alpha);
         p.rotateY(-delta);
         p.strokeWeight(3);
         p.stroke(mptab10.get('blue'))
-        p.line(0, 0, 0, SCALE, 0, 0);
+        drawLine(p, origin, rvec);
         p.push()
-        p.translate(r.mag(), 0, 0);
+        p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.stroke(mptab10.get('orange'));
-        p.line(0, 0, 0, 0, SCALE, 0);
+        drawLine(p, origin, pvec);
         p.push()
-        p.translate(0, SCALE, 0);
+        p.translate(0, pvec.mag(), 0);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
         p.stroke(mptab10.get('green'));
-        p.line(0, 0, 0, 0, 0, SCALE);
+        drawLine(p, origin, qvec);
         p.push()
-        p.translate(0, 0, SCALE);
+        p.translate(0, 0, qvec.mag());
         p.rotateX(90);
         p.cone(SCALE*0.05, SCALE*0.1);
         p.pop();
@@ -215,4 +223,16 @@ function rightHanded3DtoWEBGL(p, rotY, rotZ) {
         0, 0, 0, 1);
     p.rotateY(rotY);
     p.rotateZ(rotZ);
+}
+
+/*
+ * Draw a line between two points represented as p5.Vector instances.
+ *
+ * Parameters:
+ * p - the p5 object
+ * a - first point
+ * b - second point
+ */
+function drawLine(p, a, b) {
+    p.line(a.x, a.y, a.z, b.x, b.y, b.z);
 }

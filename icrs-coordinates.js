@@ -43,7 +43,7 @@ var deltaMin = -90;
 var deltaMax = 90;
 var deltaStep = 1;
 
-var pvec, qvec, rvec, origin, sourcvec;
+var pvec, qvec, rvec, origin, sourcevec;
 
 var explanationText;
 var explain;
@@ -57,7 +57,7 @@ var gui;
 var rasc, rdesc, xasc, xdesc, yasc, ydesc;
 
 const REF_PLANE_RADIUS = 3.0;
-const SCALE = 100;
+const PIXSCALING = 100;
 const HELPSIZE = 600;
 
 var sketch = function(p) {
@@ -106,28 +106,29 @@ var sketch = function(p) {
         p.push();
 
         rightHanded3DtoWEBGL(p, camRotY, camRotZ);
+        p.scale(PIXSCALING)
 
         p.push()
 
         // XYZ axes of the ICRS
         p.strokeWeight(1);
         p.stroke(0);
-        p.line(0,0,0,REF_PLANE_RADIUS*SCALE*1.05,0,0);
+        p.line(0,0,0,REF_PLANE_RADIUS*1.05,0,0);
         p.push()
-        p.translate(REF_PLANE_RADIUS*SCALE*1.05,0,0);
+        p.translate(REF_PLANE_RADIUS*1.05,0,0);
         p.rotateZ(-90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
-        p.line(0,0,0,0,REF_PLANE_RADIUS*SCALE*1.05,0);
+        p.line(0,0,0,0,REF_PLANE_RADIUS*1.05,0);
         p.push()
-        p.translate(0,REF_PLANE_RADIUS*SCALE*1.05,0);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.translate(0,REF_PLANE_RADIUS*1.05,0);
+        p.cone(0.05, 0.1);
         p.pop();
-        p.line(0,0,0,0,0,REF_PLANE_RADIUS*SCALE*1.05);
+        p.line(0,0,0,0,0,REF_PLANE_RADIUS*1.05);
         p.push()
-        p.translate(0,0,REF_PLANE_RADIUS*SCALE*1.05);
+        p.translate(0,0,REF_PLANE_RADIUS*1.05);
         p.rotateX(90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
 
         p.pop();
@@ -135,11 +136,10 @@ var sketch = function(p) {
         pvec = p.createVector(0,1,0)
         qvec = p.createVector(0,0,1);
         rvec = p.createVector(1,0,0);
-        pvec.mult(SCALE);
-        qvec.mult(SCALE);
-        rvec.mult(SCALE);
         sourcevec = p.createVector(p.cos(alpha)*p.cos(delta), p.sin(alpha)*p.cos(delta), p.sin(delta));
-        sourcevec.mult(REF_PLANE_RADIUS*SCALE);
+        sourcevec.mult(REF_PLANE_RADIUS);
+
+        vectorizedLine(p, origin, sourcevec);
 
         p.push();
         p.strokeWeight(3);
@@ -150,7 +150,7 @@ var sketch = function(p) {
         p.push()
         p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
         p.pop();
 
@@ -164,23 +164,23 @@ var sketch = function(p) {
         p.push()
         p.translate(rvec.mag(), 0, 0);
         p.rotateZ(-90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
         p.stroke(mptab10.get('orange'));
         vectorizedLine(p, origin, pvec);
         p.push()
         p.translate(0, pvec.mag(), 0);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
         p.stroke(mptab10.get('green'));
         vectorizedLine(p, origin, qvec);
         p.push()
         p.translate(0, 0, qvec.mag());
         p.rotateX(90);
-        p.cone(SCALE*0.05, SCALE*0.1);
+        p.cone(0.05, 0.1);
         p.pop();
         p.stroke(0);
-        p.sphere(SCALE*0.05);
+        p.sphere(0.05);
         p.pop();
 
         // Reference plane (XY plane of BCRS, loosely speaking the Ecliptic plane)
@@ -188,7 +188,7 @@ var sketch = function(p) {
         // is to see the orbital ellipse through the plane).
         p.noStroke();
         p.fill(mptab10.get('red')[0], mptab10.get('red')[1], mptab10.get('red')[2], 150);
-        p.ellipse(0, 0, REF_PLANE_RADIUS*SCALE, REF_PLANE_RADIUS*SCALE, 50);
+        p.ellipse(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, 50);
 
         p.pop();
     }

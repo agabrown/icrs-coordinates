@@ -59,6 +59,8 @@ var rasc, rdesc, xasc, xdesc, yasc, ydesc;
 const REF_PLANE_RADIUS = 3.0;
 const PIXSCALING = 100;
 const HELPSIZE = 600;
+const WC = 900;
+const HC = 800;
 
 var sketch = function(p) {
 
@@ -67,8 +69,8 @@ var sketch = function(p) {
     }
 
     p.setup = function() {
-        var canvas = p.createCanvas(900, 600, p.WEBGL);
-        p.ortho();
+        var canvas = p.createCanvas(WC, HC, p.WEBGL);
+        p.ortho(-WC/2, WC/2, -HC/2, HC/2, 0, 2*WC);
         canvas.position(0,0);
         gui = p.createGui(this, 'ICRS Coordinates');
         gui.addGlobals('showHelp', 'camRotY', 'camRotZ', 'alpha', 'delta');
@@ -186,9 +188,27 @@ var sketch = function(p) {
         // Reference plane (XY plane of BCRS, loosely speaking the Ecliptic plane)
         // Draw this last so that the transparency works correctly (where the intention
         // is to see the orbital ellipse through the plane).
-        p.noStroke();
-        p.fill(mptab10.get('red')[0], mptab10.get('red')[1], mptab10.get('red')[2], 150);
+        p.push();
         p.ellipse(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, 50);
+        p.pop();
+ 
+        p.push();
+        p.rotateX(90);
+        p.arc(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, -90, 90, p.OPEN, 50);
+        p.rotateY(alpha);
+        p.arc(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, -90, 90, p.OPEN, 50);
+        p.pop();
+
+        p.push();
+        p.translate(0, 0, REF_PLANE_RADIUS*p.sin(delta));
+        p.ellipse(0, 0, REF_PLANE_RADIUS*p.cos(delta), REF_PLANE_RADIUS*p.cos(delta), 50);
+        p.pop();
+
+        p.push();
+        p.noStroke();
+        p.fill(mptab10.get('grey')[0], mptab10.get('grey')[1], mptab10.get('grey')[2], 100);
+        p.sphere(REF_PLANE_RADIUS, 50, 50);
+        p.pop();
 
         p.pop();
     }

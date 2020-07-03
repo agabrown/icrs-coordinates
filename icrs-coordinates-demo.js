@@ -2,7 +2,7 @@
  * P5/Processing sketch that illustrates interactively the meaning of the vector triad [p,q,r]
  * in the ICRS in relation to the coordinates (alpha,delta).
  *
- * Anthony Brown Jun 2020 - Jun 2020
+ * Anthony Brown Jun 2020 - Jul 2020
  */
 
 var mptab10 = new Map();

@@ -2,7 +2,7 @@
  * P5/Processing sketch that illustrates interactively the meaning of the vector triad [p,q,r]
  * in the ICRS in relation to the coordinates (alpha,delta).
  *
- * Anthony Brown Jun 2020 - Jul 2020
+ * Anthony Brown Jun 2020 - Sep 2020
  */
 
 var mptab10 = new Map();
@@ -51,9 +51,9 @@ var showHelp = true;
 var helpVisible = true;
 var helpButton;
 
-var showTanPlane = true;
-var tanPlaneVisible = true;
-var tanPlaneButton;
+var showTangentPlane = true;
+var tangentPlaneVisible = true;
+var tangentPlaneButton;
 
 var guiVisible = true;
 var gui;
@@ -62,7 +62,7 @@ var rasc, rdesc, xasc, xdesc, yasc, ydesc;
 
 const REF_PLANE_RADIUS = 3.0;
 const PIXSCALING = 100;
-const HELPSIZE = 600;
+const HELPSIZE = 580;
 const WC = 900;
 const HC = 800;
 const TRIADVECLEN = 1.0;
@@ -78,7 +78,7 @@ var sketch = function (p) {
         p.ortho(-WC / 2, WC / 2, -HC / 2, HC / 2, 0, 2 * WC);
         canvas.position(0, 0);
         gui = p.createGui(this, 'ICRS Coordinates');
-        gui.addGlobals('showHelp', 'showTanPlane', 'camRotY', 'camRotZ', 'alpha', 'delta');
+        gui.addGlobals('showHelp', 'showTangentPlane', 'camRotY', 'camRotZ', 'alpha', 'delta');
         gui.setPosition(p.width, paddingVertical);
 
         explain = p.createDiv(p.join(explanationText, " "));
@@ -110,11 +110,11 @@ var sketch = function (p) {
             }
         }
 
-        if (showTanPlane & !tanPlaneVisible) {
-            tanPlaneVisible = true;
+        if (showTangentPlane & !tangentPlaneVisible) {
+            tangentPlaneVisible = true;
         } else {
-            if (!showTanPlane) {
-                tanPlaneVisible = false;
+            if (!showTangentPlane) {
+                tangentPlaneVisible = false;
             }
         }
 
@@ -223,7 +223,7 @@ var sketch = function (p) {
         p.sphere(REF_PLANE_RADIUS, 50, 50);
         p.pop();
 
-        if (tanPlaneVisible) {
+        if (tangentPlaneVisible) {
             p.push();
             p.normalMaterial();
             p.translate(sourcevec.x, sourcevec.y, sourcevec.z);

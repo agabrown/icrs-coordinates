@@ -6,16 +6,16 @@
  */
 
 var mptab10 = new Map();
-mptab10.set('blue', [ 31, 119, 180]);
-mptab10.set('orange', [255, 127,  14]);
-mptab10.set('green', [ 44, 160,  44]);
-mptab10.set('red', [214,  39,  40]);
+mptab10.set('blue', [31, 119, 180]);
+mptab10.set('orange', [255, 127, 14]);
+mptab10.set('green', [44, 160, 44]);
+mptab10.set('red', [214, 39, 40]);
 mptab10.set('purple', [148, 103, 189]);
-mptab10.set('brown', [140,  86,  75]);
+mptab10.set('brown', [140, 86, 75]);
 mptab10.set('magenta', [227, 119, 194]);
 mptab10.set('grey', [127, 127, 127]);
-mptab10.set('olive', [188, 189,  34]);
-mptab10.set('cyan', [ 23, 190, 207]);
+mptab10.set('olive', [188, 189, 34]);
+mptab10.set('cyan', [23, 190, 207]);
 
 var paddingHorizontal = 50;
 var paddingVertical = 50;
@@ -51,6 +51,10 @@ var showHelp = true;
 var helpVisible = true;
 var helpButton;
 
+var showTanPlane = true;
+var tanPlaneVisible = true;
+var tanPlaneButton;
+
 var guiVisible = true;
 var gui;
 
@@ -61,19 +65,20 @@ const PIXSCALING = 100;
 const HELPSIZE = 600;
 const WC = 900;
 const HC = 800;
+const TRIADVECLEN = 1.0;
 
-var sketch = function(p) {
+var sketch = function (p) {
 
-    p.preload = function() {
+    p.preload = function () {
         explanationText = p.loadStrings("explanation.html");
     }
 
-    p.setup = function() {
+    p.setup = function () {
         var canvas = p.createCanvas(WC, HC, p.WEBGL);
-        p.ortho(-WC/2, WC/2, -HC/2, HC/2, 0, 2*WC);
-        canvas.position(0,0);
+        p.ortho(-WC / 2, WC / 2, -HC / 2, HC / 2, 0, 2 * WC);
+        canvas.position(0, 0);
         gui = p.createGui(this, 'ICRS Coordinates');
-        gui.addGlobals('showHelp', 'camRotY', 'camRotZ', 'alpha', 'delta');
+        gui.addGlobals('showHelp', 'showTanPlane', 'camRotY', 'camRotZ', 'alpha', 'delta');
         gui.setPosition(p.width, paddingVertical);
 
         explain = p.createDiv(p.join(explanationText, " "));
@@ -83,14 +88,14 @@ var sketch = function(p) {
         p.ellipseMode(p.RADIUS);
         p.angleMode(p.DEGREES);
 
-        origin = p.createVector(0,0,0);
+        origin = p.createVector(0, 0, 0);
 
         p.noLoop();
         p.noFill();
         p.smooth();
     }
 
-    p.draw = function() {
+    p.draw = function () {
         p.background(255);
 
         if (showHelp & !helpVisible) {
@@ -105,6 +110,14 @@ var sketch = function(p) {
             }
         }
 
+        if (showTanPlane & !tanPlaneVisible) {
+            tanPlaneVisible = true;
+        } else {
+            if (!showTanPlane) {
+                tanPlaneVisible = false;
+            }
+        }
+
         p.push();
 
         rightHanded3DtoWEBGL(p, camRotY, camRotZ);
@@ -115,30 +128,30 @@ var sketch = function(p) {
         // XYZ axes of the ICRS
         p.strokeWeight(1);
         p.stroke(0);
-        p.line(0,0,0,REF_PLANE_RADIUS*1.05,0,0);
+        p.line(0, 0, 0, REF_PLANE_RADIUS * 1.1, 0, 0);
         p.push()
-        p.translate(REF_PLANE_RADIUS*1.05,0,0);
+        p.translate(REF_PLANE_RADIUS * 1.1, 0, 0);
         p.rotateZ(-90);
         p.cone(0.05, 0.1);
         p.pop();
-        p.line(0,0,0,0,REF_PLANE_RADIUS*1.05,0);
+        p.line(0, 0, 0, 0, REF_PLANE_RADIUS * 1.1, 0);
         p.push()
-        p.translate(0,REF_PLANE_RADIUS*1.05,0);
+        p.translate(0, REF_PLANE_RADIUS * 1.1, 0);
         p.cone(0.05, 0.1);
         p.pop();
-        p.line(0,0,0,0,0,REF_PLANE_RADIUS*1.05);
+        p.line(0, 0, 0, 0, 0, REF_PLANE_RADIUS * 1.1);
         p.push()
-        p.translate(0,0,REF_PLANE_RADIUS*1.05);
+        p.translate(0, 0, REF_PLANE_RADIUS * 1.1);
         p.rotateX(90);
         p.cone(0.05, 0.1);
         p.pop();
 
         p.pop();
 
-        pvec = p.createVector(0,1,0)
-        qvec = p.createVector(0,0,1);
-        rvec = p.createVector(1,0,0);
-        sourcevec = p.createVector(p.cos(alpha)*p.cos(delta), p.sin(alpha)*p.cos(delta), p.sin(delta));
+        pvec = p.createVector(0, TRIADVECLEN, 0)
+        qvec = p.createVector(0, 0, TRIADVECLEN);
+        rvec = p.createVector(TRIADVECLEN, 0, 0);
+        sourcevec = p.createVector(p.cos(alpha) * p.cos(delta), p.sin(alpha) * p.cos(delta), p.sin(delta));
         sourcevec.mult(REF_PLANE_RADIUS);
 
         vectorizedLine(p, origin, sourcevec);
@@ -191,7 +204,7 @@ var sketch = function(p) {
         p.push();
         p.ellipse(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, 50);
         p.pop();
- 
+
         p.push();
         p.rotateX(90);
         p.arc(0, 0, REF_PLANE_RADIUS, REF_PLANE_RADIUS, -90, 90, p.OPEN, 50);
@@ -200,8 +213,8 @@ var sketch = function(p) {
         p.pop();
 
         p.push();
-        p.translate(0, 0, REF_PLANE_RADIUS*p.sin(delta));
-        p.ellipse(0, 0, REF_PLANE_RADIUS*p.cos(delta), REF_PLANE_RADIUS*p.cos(delta), 50);
+        p.translate(0, 0, REF_PLANE_RADIUS * p.sin(delta));
+        p.ellipse(0, 0, REF_PLANE_RADIUS * p.cos(delta), REF_PLANE_RADIUS * p.cos(delta), 50);
         p.pop();
 
         p.push();
@@ -209,6 +222,17 @@ var sketch = function(p) {
         p.fill(mptab10.get('grey')[0], mptab10.get('grey')[1], mptab10.get('grey')[2], 100);
         p.sphere(REF_PLANE_RADIUS, 50, 50);
         p.pop();
+
+        if (tanPlaneVisible) {
+            p.push();
+            p.normalMaterial();
+            p.translate(sourcevec.x, sourcevec.y, sourcevec.z);
+            p.rotateZ(alpha);
+            p.rotateY(90 - delta);
+            p.fill(mptab10.get('red')[0], mptab10.get('red')[1], mptab10.get('red')[2], 100);
+            p.plane(2 * 0.9 * TRIADVECLEN, 2 * 0.9 * TRIADVECLEN, 50, 50);
+            p.pop();
+        }
 
         p.pop();
     }
